@@ -27,6 +27,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	float GetTotalMassOfActorsOnPlate() const;
+
 	UPROPERTY(EditAnywhere)
 	float OpenAngle = -90.f;
 
