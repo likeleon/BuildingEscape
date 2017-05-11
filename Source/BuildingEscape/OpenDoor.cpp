@@ -21,18 +21,6 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = GetOwner();
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-}
-
-void UOpenDoor::OpenDoor()
-{
-	Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-	LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-}
-
-void UOpenDoor::CloseDoor()
-{
-	Owner->SetActorRotation(FRotator::ZeroRotator);
 }
 
 // Called every frame
@@ -40,14 +28,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (GetTotalMassOfActorsOnPlate() > 30.f)
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass)
 	{
-		OpenDoor();
+		OnOpen.Broadcast();
 	}
-
-	if (GetWorld()->GetTimeSeconds() > LastDoorOpenTime + DoorCloseDelay)
+	else
 	{
-		CloseDoor();
+		OnClose.Broadcast();
 	}
 }
 
@@ -60,7 +47,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate() const
 	{
 		float ActorMass = Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		TotalMass += ActorMass;
-		UE_LOG(LogTemp, Warning, TEXT("%s (%.2fkg) on pressure plate"), *Actor->GetName(), ActorMass);
+		//UE_LOG(LogTemp, Warning, TEXT("%s (%.2fkg) on pressure plate"), *Actor->GetName(), ActorMass);
 	}
 	return TotalMass;
 }
